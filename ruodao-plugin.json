@@ -1,0 +1,205 @@
+{
+  "id": "com.ruodao.office-suite",
+  "name": "Office 办公套件",
+  "version": "1.3.0",
+  "apiVersion": ">=0.1.0 <0.2.0",
+  "description": "无需安装 WPS/Office：Word 富文本编辑与 docx 往返、Excel 公式求值与真实公式导出、PPT 主题模板与 16:9 演示、PDF 渲染查看与合并/压缩/拆分/转 Word、图片压缩/裁剪/缩放/调色/水印与转 PDF，另有转换中心与 AI 管家。",
+  "requires": {
+    "capabilities": {
+      "required": {
+        "commands": "0.1.0",
+        "code.execute": "0.1.0"
+      }
+    }
+  },
+  "permissions": [
+    "filesystem-read",
+    "filesystem-write",
+    "network",
+    "process"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "id": "com.ruodao.office.doctor",
+        "title": "环境自检",
+        "description": "检查内嵌解析库是否可用，不访问网络、不产生费用。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "doctor"],
+          "cwd": ".",
+          "timeoutMs": 30000
+        }
+      },
+      {
+        "id": "com.ruodao.office.docx2text",
+        "title": "提取 Word 文本",
+        "description": "docx → 结构化文本（标题/段落/表格统计）。stdin 传 { path }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "docx2text"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.docx-edit",
+        "title": "编辑 Word（文本替换）",
+        "description": "批量文本替换后另存 docx，保留原排版结构。stdin 传 { path, replacements: [{ from, to }], output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "docx-edit"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.docx-build",
+        "title": "生成 Word 文档",
+        "description": "由段落/标题块生成 docx。stdin 传 { title?, blocks: [{ type, level?, text }], output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "docx-build"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.xlsx-grid",
+        "title": "读取表格网格",
+        "description": "xlsx/xls/csv → 每个 sheet 的二维数组与公式映射，供编辑器网格加载。stdin 传 { path }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "xlsx-grid"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.xlsx-create",
+        "title": "生成 Excel 表格",
+        "description": "二维数组 → xlsx（自动识别数字与 = 公式、写入缓存值、自适应列宽、多工作表）。stdin 传 { sheets: [{ name, rows }], output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "xlsx-create"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.xlsx2json",
+        "title": "读取表格为 JSON",
+        "description": "xlsx/xls → 每个 sheet 的 JSON 行。stdin 传 { path, sheet?, rowLimit? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "xlsx2json"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.xlsx2csv",
+        "title": "表格转 CSV",
+        "description": "xlsx/xls → CSV（UTF-8 BOM，Excel 友好）。stdin 传 { path, sheet?, output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "xlsx2csv"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.xlsx-edit",
+        "title": "编辑表格单元格",
+        "description": "修改指定单元格后另存。stdin 传 { path, sheet?, edits: [{ cell, value }], output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "xlsx-edit"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.csv2xlsx",
+        "title": "CSV 转 Excel",
+        "description": "CSV → xlsx。stdin 传 { path, output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "csv2xlsx"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.pptx2json",
+        "title": "解析 PPT 大纲",
+        "description": "pptx → 每页标题/要点/表格/图片统计。stdin 传 { path }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "pptx2json"],
+          "cwd": ".",
+          "timeoutMs": 120000
+        }
+      },
+      {
+        "id": "com.ruodao.office.pptx-build",
+        "title": "生成 PPT",
+        "description": "大纲与主题 JSON → 16:9 pptx（封面/章节/内容/结尾版式，可带主题配色）。stdin 传 { title?, theme?, slides: [{ title, bullets, notes?, layout? }], output? }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "pptx-build"],
+          "cwd": ".",
+          "timeoutMs": 180000
+        }
+      },
+      {
+        "id": "com.ruodao.office.pdf-note",
+        "title": "PDF 信息探测",
+        "description": "读取 PDF 页数等元信息；查看、导出、拆分、合并、压缩由工作台本机完成。stdin 传 { path }。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "pdf-note"],
+          "cwd": ".",
+          "timeoutMs": 60000
+        }
+      },
+      {
+        "id": "com.ruodao.office.ai",
+        "title": "AI 文档处理",
+        "description": "摘要/改写/翻译/要点/续写/自由指令。stdin 传 { task, text, instruction? }，凭据由宿主注入。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "ai"],
+          "cwd": ".",
+          "timeoutMs": 150000
+        }
+      },
+      {
+        "id": "com.ruodao.office.agent",
+        "title": "AI 管家",
+        "description": "对话式控制整个办公套件：AI 可读取、生成、编辑、转换文档/表格/PPT，写入类操作先请求用户确认。stdin 传 { messages, approvals?, rejections?, context?, model? }，凭据由宿主注入。",
+        "action": {
+          "type": "process",
+          "command": "node",
+          "args": ["bin/office.mjs", "agent"],
+          "cwd": ".",
+          "timeoutMs": 600000
+        }
+      }
+    ]
+  }
+}
